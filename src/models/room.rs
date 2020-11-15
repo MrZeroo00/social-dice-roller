@@ -1,7 +1,8 @@
 use crate::schema::rooms;
+use serde::Serialize;
 use std::fmt;
 
-#[derive(Queryable, Debug)]
+#[derive(Queryable, Debug, Serialize)]
 pub struct Room {
     pub id: String,
     pub created_at: chrono::NaiveDateTime,
