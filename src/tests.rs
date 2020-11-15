@@ -2,6 +2,7 @@ extern crate parking_lot;
 
 use self::parking_lot::Mutex;
 use super::db::rooms;
+use rocket::http::Status;
 use rocket::local::Client;
 
 // We use a lock to synchronize between tests so DB operations don't collide.
@@ -31,7 +32,8 @@ fn create_room() {
         let init_rooms = rooms::get_all_rooms(&conn);
 
         // Issue a request to create a new room.
-        client.post("/api/rooms/create").dispatch();
+        let result = client.post("/api/rooms/create").dispatch();
+        assert_eq!(result.status(), Status::Ok);
 
         // Ensure we have one more room in the database.
         let new_rooms = rooms::get_all_rooms(&conn);
@@ -46,7 +48,8 @@ fn create_room_with_name() {
         let init_rooms = rooms::get_all_rooms(&conn);
 
         // Issue a request to create a new room.
-        client.post("/api/rooms/create/happy-cow").dispatch();
+        let result = client.post("/api/rooms/create/happy-cow").dispatch();
+        assert_eq!(result.status(), Status::Ok);
 
         // Ensure we have one more room in the database.
         let new_rooms = rooms::get_all_rooms(&conn);
@@ -64,7 +67,8 @@ fn create_duplicate_room_with_name() {
         let init_rooms = rooms::get_all_rooms(&conn);
 
         // Issue a request to create a new room.
-        client.post("/api/rooms/create/happy-cow").dispatch();
+        let mut result = client.post("/api/rooms/create/happy-cow").dispatch();
+        assert_eq!(result.status(), Status::Ok);
 
         // Ensure we have one more room in the database.
         let mut new_rooms = rooms::get_all_rooms(&conn);
@@ -74,7 +78,8 @@ fn create_duplicate_room_with_name() {
         assert_eq!(new_rooms[0].id, "happy-cow");
 
         // Issue a request to create a new room with the same name as the previous one.
-        client.post("/api/rooms/create/happy-cow").dispatch();
+        result = client.post("/api/rooms/create/happy-cow").dispatch();
+        assert_eq!(result.status(), Status::Ok);
 
         // Ensure we didn't create a new room.
         new_rooms = rooms::get_all_rooms(&conn);
