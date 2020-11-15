@@ -1,0 +1,4 @@
+/target
+
+# Generated databases
+db.sqlite
