@@ -57,8 +57,8 @@ pub fn create_room_with_name(room_name: String, conn: &SqliteConnection) -> Resu
 }
 
 /// Returns all rooms in table.
-pub fn get_all_rooms(conn: &SqliteConnection) -> Vec<Room> {
-    rooms.order(id.desc()).load::<Room>(conn).unwrap()
+pub fn get_all_rooms(conn: &SqliteConnection) -> Result<Vec<Room>, Error> {
+    rooms.order(id.desc()).load::<Room>(conn)
 }
 
 /// Returns a room with the given name from the table.

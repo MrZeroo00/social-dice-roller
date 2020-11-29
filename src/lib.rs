@@ -33,6 +33,7 @@ pub fn rocket() -> rocket::Rocket {
             routes![
                 routes::rooms::create_room,
                 routes::rooms::create_room_with_name,
+                routes::rooms::get_rooms,
             ],
         )
         .register(catchers![routes::not_found])

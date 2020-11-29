@@ -17,3 +17,9 @@ pub fn create_room_with_name(
     let room = db::rooms::create_room_with_name(room_name, &conn);
     Ok(Json(room.unwrap()))
 }
+
+#[get("/api/rooms")]
+pub fn get_rooms(conn: db::DbConn) -> Result<Json<Vec<room::Room>>, Error> {
+    let rooms = db::rooms::get_all_rooms(&conn);
+    Ok(Json(rooms.unwrap()))
+}
