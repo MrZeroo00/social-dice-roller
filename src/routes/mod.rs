@@ -1,4 +1,5 @@
 pub mod rooms;
+pub mod players;
 use rocket_contrib::json::JsonValue;
 
 #[catch(404)]

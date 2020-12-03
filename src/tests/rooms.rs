@@ -1,6 +1,6 @@
 use crate::db::rooms;
 use rocket::http::Status;
-use rocket::local::{Client, LocalResponse};
+use rocket::local::Client;
 use rocket_contrib::json::JsonValue;
 
 macro_rules! run_test {
@@ -18,19 +18,12 @@ macro_rules! run_test {
     }};
 }
 
-/// Helper function for converting response to json value.
-pub fn response_json_value(response: &mut LocalResponse) -> JsonValue {
-    let body = response.body().expect("No body");
-    info!("{:?}", body);
-    serde_json::from_reader(body.into_inner()).expect("Can't parse value")
-}
-
 /// Helper function for getting all rooms using rooms route
 pub fn get_rooms_route(client: &Client) -> JsonValue {
     // Get the rooms before making changes.
     let mut init_rooms_response = client.get("/api/rooms").dispatch();
     assert_eq!(init_rooms_response.status(), Status::Ok);
-    response_json_value(&mut init_rooms_response)
+    super::response_json_value(&mut init_rooms_response)
 }
 
 #[test]
@@ -60,7 +53,7 @@ fn create_room_route() {
         let mut response = client.post("/api/rooms/create").dispatch();
         assert_eq!(response.status(), Status::Ok);
         // Check that this is a valid JSON (otherwise this function call would panic)
-        let _response_json = response_json_value(&mut response);
+        let _response_json = super::response_json_value(&mut response);
 
         // Ensure we have one more room in the database.
         let new_rooms = get_rooms_route(&client);
@@ -101,7 +94,7 @@ fn create_room_with_name_route() {
         let mut response = client.post("/api/rooms/create/happy-cow").dispatch();
         assert_eq!(response.status(), Status::Ok);
         // Check that this is a valid JSON (otherwise this function call would panic)
-        let response_json = response_json_value(&mut response);
+        let response_json = super::response_json_value(&mut response);
 
         // Ensure the endpoint returns a JSON with the room id we expect
         let response_room_id = response_json
@@ -170,7 +163,7 @@ fn create_duplicate_room_with_name_route() {
         assert_eq!(response.status(), Status::Ok);
 
         // Check that this is a valid JSON (otherwise this function call would panic)
-        let response_json = response_json_value(&mut response);
+        let response_json = super::response_json_value(&mut response);
 
         // Ensure the endpoint returns a JSON with the room id we expect
         let response_room_id = response_json

@@ -34,6 +34,9 @@ pub fn rocket() -> rocket::Rocket {
                 routes::rooms::create_room,
                 routes::rooms::create_room_with_name,
                 routes::rooms::get_rooms,
+                routes::players::create_player_with_name,
+                routes::players::get_players,
+                routes::players::update_player_name,
             ],
         )
         .register(catchers![routes::not_found])

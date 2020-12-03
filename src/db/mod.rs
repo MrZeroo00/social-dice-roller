@@ -2,6 +2,7 @@ use diesel::SqliteConnection;
 use rocket::Rocket;
 
 pub mod rooms;
+pub mod players;
 
 // This macro from `diesel_migrations` defines an `embedded_migrations` module
 // containing a function named `run`. This allows the example to be run and
